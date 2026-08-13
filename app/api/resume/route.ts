@@ -30,8 +30,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `Could not parse file: ${e.message}` }, { status: 400 });
   }
 
-  // --- REMOVED THE DISK WRITE LOGIC THAT WAS CAUSING THE ENOENT ERROR ---
-  const filePath = `uploads/${Date.now()}-${file.name}`; // Virtual identifier instead of a local disk path
+  // Virtual identifier instead of writing to Vercel's read-only disk
+  const filePath = `uploads/${Date.now()}-${file.name}`;
 
   const profile = parseResumeText(text);
   await prisma.resume.updateMany({ where: { userId: user.id }, data: { isActive: false } });
