@@ -63,11 +63,13 @@ async function main() {
       continue; // Skip unwanted jobs
     }
 
-    if (nj.postedDate) {
-      const jobDate = new Date(nj.postedDate);
-      if (jobDate < MIN_POSTING_DATE) {
-        continue; // Skip older jobs
-      }
+    if (!nj.postedDate) {
+      continue; // Skip jobs that don't have a clear post date
+    }
+
+    const jobDate = new Date(nj.postedDate);
+    if (isNaN(jobDate.getTime()) || jobDate < MIN_POSTING_DATE) {
+      continue; // Skip older jobs or invalid dates
     }
 
     const key = canonicalKey(nj);
