@@ -1,0 +1,258 @@
+// Local dev uses SQLite (zero setup). For Supabase/Postgres, change provider to
+// "postgresql" and DATABASE_URL to your connection string — the models are portable.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+
+  profile        Profile?
+  resumes        Resume[]
+  applications   Application[]
+  savedJobs      SavedJob[]
+  dismissedJobs  DismissedJob[]
+  coverLetters   CoverLetter[]
+  tailoredResumes TailoredResume[]
+  followedCompanies FollowedCompany[]
+  preferences    Preferences?
+  notificationPrefs NotificationPrefs?
+  learnedRules   LearnedRule[]
+}
+
+model Profile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  json      String   // serialized ResumeProfile (source of truth for matching)
+  updatedAt DateTime @updatedAt
+}
+
+model Resume {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  name       String                    // "Version 2 - SQL focus"
+  filePath   String                    // stored file (local disk / Supabase Storage)
+  mimeType   String
+  isActive   Boolean  @default(false)
+  parsedJson String                    // ResumeProfile snapshot for this version
+  createdAt  DateTime @default(now())
+
+  applications Application[]
+  tailored     TailoredResume[]
+}
+
+model Job {
+  id          String   @id @default(cuid())
+  company     String
+  title       String
+  location    String
+  jobType     String   // Internship | Full-Time | Rotational | Co-op | Unknown
+  workMode    String   // Remote | Hybrid | On-site | Unknown
+  startDate   String?
+  postedDate  DateTime?
+  deadline    DateTime?
+  salary      String?
+  description String
+  url         String
+  canonicalKey String  @unique         // dedupe fingerprint (§32)
+  companyLogo String?
+  isDemo      Boolean  @default(false)  // clearly-labeled demo data (§54)
+
+  firstSeen   DateTime @default(now())
+  lastChecked DateTime @default(now())
+  closed      Boolean  @default(false)  // gone from source => potentially closed (§31)
+
+  sources     JobSource[]
+  matches     JobMatch[]
+  applications Application[]
+  saved       SavedJob[]
+  dismissed   DismissedJob[]
+  coverLetters CoverLetter[]
+  tailored    TailoredResume[]
+
+  @@index([company])
+  @@index([jobType])
+  @@index([postedDate])
+}
+
+model JobSource {
+  id       String @id @default(cuid())
+  jobId    String
+  job      Job    @relation(fields: [jobId], references: [id])
+  source   String
+  url      String
+  sourceId String
+  @@unique([jobId, source, sourceId])
+}
+
+model JobMatch {
+  id           String @id @default(cuid())
+  jobId        String
+  job          Job    @relation(fields: [jobId], references: [id])
+  resumeId     String                    // which resume version produced this score
+  score        Int
+  breakdownJson String
+  strengthsJson String
+  gapsJson     String
+  keywordsJson String
+  computedAt   DateTime @default(now())
+  @@unique([jobId, resumeId])
+  @@index([score])
+}
+
+model Application {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  jobId         String?
+  job           Job?     @relation(fields: [jobId], references: [id])
+  resumeId      String?
+  resume        Resume?  @relation(fields: [resumeId], references: [id])
+
+  company       String
+  title         String
+  jobType       String?
+  location      String?
+  workMode      String?
+  url           String?
+  source        String?
+  status        String   @default("Applied")
+  referral      Boolean  @default(false)
+  referralPerson String?
+  recruiter     String?
+  recruiterContact String?
+  coverLetterId String?
+  matchScore    Int?
+  salary        String?
+  notes         String?
+  nextAction    String?
+
+  datePosted    DateTime?
+  dateDiscovered DateTime?
+  dateApplied   DateTime?
+  deadline      DateTime?
+  followUpDate  DateTime?
+  rejectionDate DateTime?
+  offerDate     DateTime?
+
+  createdAt     DateTime @default(now())
+  events        ApplicationEvent[]
+  @@index([status])
+  @@index([userId])
+}
+
+model ApplicationEvent {
+  id            String   @id @default(cuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id])
+  type          String   // status_change | interview | note | follow_up
+  detail        String?
+  at            DateTime @default(now())
+}
+
+model SavedJob {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+  jobId  String
+  job    Job    @relation(fields: [jobId], references: [id])
+  at     DateTime @default(now())
+  @@unique([userId, jobId])
+}
+
+model DismissedJob {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+  jobId  String
+  job    Job    @relation(fields: [jobId], references: [id])
+  reason String?
+  at     DateTime @default(now())
+  @@unique([userId, jobId])
+}
+
+model CoverLetter {
+  id      String @id @default(cuid())
+  userId  String
+  user    User   @relation(fields: [userId], references: [id])
+  jobId   String
+  job     Job    @relation(fields: [jobId], references: [id])
+  content String
+  createdAt DateTime @default(now())
+}
+
+model TailoredResume {
+  id       String @id @default(cuid())
+  userId   String
+  user     User   @relation(fields: [userId], references: [id])
+  jobId    String
+  job      Job    @relation(fields: [jobId], references: [id])
+  resumeId String
+  resume   Resume @relation(fields: [resumeId], references: [id])
+  changesJson String
+  createdAt DateTime @default(now())
+}
+
+model FollowedCompany {
+  id      String @id @default(cuid())
+  userId  String
+  user    User   @relation(fields: [userId], references: [id])
+  company String
+  @@unique([userId, company])
+}
+
+model Preferences {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+  json   String // serialized JobPreferences
+}
+
+model NotificationPrefs {
+  id                String  @id @default(cuid())
+  userId            String  @unique
+  user              User    @relation(fields: [userId], references: [id])
+  digestEnabled     Boolean @default(true)
+  digestHour        Int     @default(9)
+  emailEnabled      Boolean @default(true)
+  smsEnabled        Boolean @default(false)
+  realtimeEnabled   Boolean @default(true)
+  alertThreshold    Int     @default(85)
+  quietStart        Int     @default(22)   // 10 PM
+  quietEnd          Int     @default(9)    // 9 AM
+  timezone          String  @default("America/New_York")
+  paused            Boolean @default(false)
+  pauseWeekends     Boolean @default(false)
+  gmailAddress      String?
+  phoneNumber       String?
+}
+
+model LearnedRule {
+  id      String @id @default(cuid())
+  userId  String
+  user    User   @relation(fields: [userId], references: [id])
+  kind    String   // ignore_company | ignore_keyword | ignore_role
+  value   String
+  active  Boolean @default(true)
+  createdAt DateTime @default(now())
+}
+
+// Log for ingestion failures (§39 admin/debug log)
+model IngestionLog {
+  id        String @id @default(cuid())
+  source    String
+  ok        Boolean
+  message   String?
+  jobsFound Int      @default(0)
+  at        DateTime @default(now())
+}

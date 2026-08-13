@@ -1,0 +1,41 @@
+{
+  "name": "jobpilot",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "npx prisma@5 generate && next build",
+    "start": "next start",
+    "setup": "npx prisma@5 generate && prisma migrate dev --name init && npm run seed",
+    "seed": "tsx prisma/seed.ts",
+    "ingest": "tsx scripts/ingest.ts",
+    "test:engine": "tsx scripts/test-engine.ts",
+    "db:studio": "npx prisma@5 studio"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "mammoth": "^1.8.0",
+    "next": "14.2.15",
+    "next-auth": "^4.24.11",
+    "papaparse": "^5.4.1",
+    "pdf-parse": "^1.1.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "recharts": "^2.13.3",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "@types/papaparse": "^5.3.15",
+    "@types/react": "^18.3.12",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "prisma": "^5.22.0",
+    "tailwindcss": "^3.4.14",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3"
+  }
+}

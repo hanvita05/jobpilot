@@ -1,0 +1,42 @@
+HANVITA MUTYALA
+Princeton, NJ | 732-915-0540 | hanvitamutyala@gmail.com | linkedin.com/in/hanvitamutyala/
+EDUCATION
+Purdue University West Lafayette, IN
+B.S. Computer Science, Minor in Management, Certification in Applied Data Science August 2023 – December 2026
+Relevant Coursework: Artificial Intelligence, Data Structures and Algorithms, Systems Programming, Data Mining and Machine Learning, Computer Architecture, Problem Solving & Object-Oriented Programming, Programming in C
+EXPERIENCE
+Handshake AI Fellowship (Project Helix & Project Helix Sourcing) Remote
+AI Engineering Fellow March 2026 - Present
+● Developed adversarial test cases to benchmark LLM performance on complex engineering tasks, identifying failure points and providing actionable improvement insights.
+● Evaluated open-source pull requests to assess technical complexity, guiding effective benchmarking tasks for LLM capabilities.
+● Advanced AI testing processes, improving model reliability and informing engineering strategies for challenging technical scenarios.
+Narb Remote
+Software Engineering Intern May 2025 – August 2025
+● Designed and implemented a points-based location scoring system for a gamified GPS habit tracker, improving core app features and user experience.
+● Helped launch a multi-chatbot platform integrating multiple LLMs to provide consolidated answers, enhancing information retrieval efficiency.
+● Collaborated cross-functionally to iterate on features, optimize AI integration using Cursor and Vibe Coding, and deliver MVP functionality under tight startup timelines.
+TruBridge Healthcare, Extern Remote
+Data Analytics Extern March 2025 – May 2025
+● Conducted exploratory data analysis on 100K+ healthcare records, uncovering patterns in social determinants of health and income disparities across NYC boroughs.
+● Built a dashboard using Claude AI Interface and Python in Google Colab to visualize findings for leadership, translating complex analyses into actionable recommendations.
+● Delivered a final presentation proposing data-driven interventions influencing organizational strategy.
+The Data Mine, BASF West Lafayette, IN
+Data Analyst August 2023 – December 2023
+● Forecasted analogue years for wine varietals using LSTM, RNN, and KNN models, improving predictive accuracy for agricultural project planning by 74%.
+● Presented findings and recommendations to stakeholders, directly influencing R&D decision-making and project prioritization.
+● Collaborated in agile workflows, contributing predictive analytics that guided strategic research initiatives.
+PROJECTS
+Customer Churn Analysis (Tableau Dashboard)
+● Conducted analysis of 10,000+ customer records to uncover key retention trends and drivers of churn.
+● Designed and implemented interactive Tableau dashboards that visualized patterns across multiple dimensions (age, activity).
+Amazon Product Analytics Case Study (User Engagement Simulation)
+● Performed a product analytics simulation to evaluate early user engagement and purchase behavior patterns.
+● Evaluated key product metrics including DAU and retention rate to diagnose user behavior and trends.
+CERTIFICATIONS & LEADERSHIP
+● Accenture North America - Project Management Simulation: Applied Agile, Hybrid, and Plan-Driven methodologies to real-world project scenarios.
+● Deloitte - Data Analytics Simulation: Completed a Deloitte job simulation involving data analysis and forensic technology, created a data dashboard using Tableau, used Excel to classify data.
+SKILLS
+Technical: Python, SQL, Tableau, Power BI, Java, C, C++, HTML/CSS, JavaScript, Linux, Bash, LLMs, Git, Replit, Claude AI Interface, Microsoft Office, Graphic Design, Cursor, Google Colab
+Soft: Leadership, Communication, Collaboration, Critical Thinking, Planning, Adaptability, Attention to Detail
+AWARDS
+Presidential Volunteer Service Award (Gold), NCWIT Aspirations in Computing
