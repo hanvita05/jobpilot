@@ -41,8 +41,35 @@ async function main() {
   }
 
   const seen = new Set<string>();
+  const MIN_POSTING_DATE = new Date("2026-06-01T00:00:00.000Z");
+  const EXCLUDED_PHRASES = [
+    "software engineer",
+    "software engineering",
+    "full stack",
+    "backend engineer",
+    "frontend engineer",
+    "devops"
+  ];
+
   let processed = 0;
   for (const nj of collected) {
+    const titleLower = (nj.title || "").toLowerCase();
+    
+    const isExcluded = EXCLUDED_PHRASES.some((phrase) => 
+      titleLower.includes(phrase.toLowerCase())
+    );
+
+    if (isExcluded) {
+      continue; // Skip unwanted jobs
+    }
+
+    if (nj.postedDate) {
+      const jobDate = new Date(nj.postedDate);
+      if (jobDate < MIN_POSTING_DATE) {
+        continue; // Skip older jobs
+      }
+    }
+
     const key = canonicalKey(nj);
     if (seen.has(key)) continue; seen.add(key);
     const job = await prisma.job.upsert({
