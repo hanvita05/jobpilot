@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { currentUser, getFeed } from "@/lib/server";
 
+export const dynamic = "force-dynamic";
+
 // Assembles the 9AM digest payload (§15). Delivery (email/SMS) is wired to
 // Gmail API / Twilio in production — see README. Here we return the payload
 // and log it, so the endpoint is real and testable without credentials.

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { currentUser } from "@/lib/server";
 
+export const dynamic = "force-dynamic";
+
 // GET -> CSV of all applications (mirrors the columns of your Google Sheet).
 export async function GET() {
   const user = await currentUser();
