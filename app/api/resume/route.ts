@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
 import { prisma } from "@/lib/db";
 import { currentUser, recomputeAllMatches } from "@/lib/server";
 import { parseResumeText } from "@/lib/parseResume";
+
+export const dynamic = "force-dynamic";
 
 // Accepts a multipart upload, extracts text (pdf-parse / mammoth), parses to a
 // ResumeProfile, stores the version, marks it active, and recomputes matches.
@@ -30,19 +30,29 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `Could not parse file: ${e.message}` }, { status: 400 });
   }
 
-  const dir = path.join(process.cwd(), "data", "uploads");
-  await mkdir(dir, { recursive: true });
-  const filePath = path.join("data", "uploads", `${Date.now()}-${file.name}`);
-  await writeFile(path.join(process.cwd(), filePath), buf);
+  // --- REMOVED THE DISK WRITE LOGIC THAT WAS CAUSING THE ENOENT ERROR ---
+  const filePath = `uploads/${Date.now()}-${file.name}`; // Virtual identifier instead of a local disk path
 
   const profile = parseResumeText(text);
   await prisma.resume.updateMany({ where: { userId: user.id }, data: { isActive: false } });
+  
   const resume = await prisma.resume.create({
-    data: { userId: user.id, name, filePath, mimeType: file.type || "application/octet-stream", isActive: true, parsedJson: JSON.stringify(profile) },
+    data: { 
+      userId: user.id, 
+      name, 
+      filePath, 
+      mimeType: file.type || "application/octet-stream", 
+      isActive: true, 
+      parsedJson: JSON.stringify(profile) 
+    },
   });
+
   await prisma.profile.upsert({
-    where: { userId: user.id }, update: { json: JSON.stringify(profile) }, create: { userId: user.id, json: JSON.stringify(profile) },
+    where: { userId: user.id }, 
+    update: { json: JSON.stringify(profile) }, 
+    create: { userId: user.id, json: JSON.stringify(profile) },
   });
+
   const n = await recomputeAllMatches(user.id);
   return NextResponse.json({ ok: true, resumeId: resume.id, profile, recomputed: n });
 }
