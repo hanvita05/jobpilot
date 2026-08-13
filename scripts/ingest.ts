@@ -50,6 +50,20 @@ async function main() {
     "frontend engineer",
     "devops"
   ];
+  const EARLY_CAREER_KEYWORDS = [
+    "new grad",
+    "university grad",
+    "entry level",
+    "early career",
+    "associate",
+    "analyst",
+    "rotational",
+    "intern",
+    "apprentice",
+    "junior",
+    "2026",
+    "2025"
+  ];
 
   let processed = 0;
   for (const nj of collected) {
@@ -71,6 +85,18 @@ async function main() {
     if (isNaN(jobDate.getTime()) || jobDate < MIN_POSTING_DATE) {
       continue; // Skip older jobs or invalid dates
     }
+
+    // 2. EXCLUDE Senior/Lead/Manager roles & Software Engineering (if desired)
+    const isSenior = ["senior", "sr.", "lead", "staff", "principal", "director", "manager"].some((kw) =>
+      titleLower.includes(kw)
+    );
+    if (isSenior) continue;
+
+    // 3. INCLUDE FILTER: Ensure title matches Early Career / New Grad keywords
+    const isEarlyCareer = EARLY_CAREER_KEYWORDS.some((kw) => titleLower.includes(kw));
+    
+    // If you only want targeted early-career jobs, skip jobs that don't match:
+    if (!isEarlyCareer) continue;
 
     const key = canonicalKey(nj);
     if (seen.has(key)) continue; seen.add(key);

@@ -79,7 +79,12 @@ function estimateYears(text: string): number {
     const d = (endY - startY) * 12 + (endM - startM);
     if (d > 0 && d < 72) months += d;
   }
-  return Math.round((months / 12) * 10) / 10;
+
+  const calculatedYears = Math.round((months / 12) * 10) / 10;
+
+  // Cap experience to 1.0 years if calculated experience is bloated by overlapping 
+  // student roles/internships, ensuring you match entry-level & new grad roles cleanly.
+  return calculatedYears > 2 ? 1.0 : calculatedYears;
 }
 
 export function parseResumeText(rawText: string): ResumeProfile {
