@@ -65,9 +65,12 @@ async function main() {
     "2025"
   ];
 
+  const EXCLUDED_EXPERIENCE_REGEX = /(?:[2-9]|\d{2,})\+?\s*(?:-\s*\d+\s*)?(?:years?|yrs?)(?:\s+of\s+experience)?/i;
+
   let processed = 0;
   for (const nj of collected) {
     const titleLower = (nj.title || "").toLowerCase();
+    const descriptionLower = (nj.description || "").toLowerCase();
     
     const isExcluded = EXCLUDED_PHRASES.some((phrase) => 
       titleLower.includes(phrase.toLowerCase())
@@ -97,6 +100,10 @@ async function main() {
     
     // If you only want targeted early-career jobs, skip jobs that don't match:
     if (!isEarlyCareer) continue;
+
+    if (EXCLUDED_EXPERIENCE_REGEX.test(descriptionLower) || EXCLUDED_EXPERIENCE_REGEX.test(titleLower)) {
+    continue; // Skip any job requiring 2 or more years of experience
+    }
 
     const key = canonicalKey(nj);
     if (seen.has(key)) continue; seen.add(key);
